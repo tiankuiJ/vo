@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.TpAccidentMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.TpAccident" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="tp_id" property="tpId" jdbcType="BIGINT" />
+    <result column="msg_id" property="msgId" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="CHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, tp_id, msg_id, status, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_tp_accident
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_tp_accident
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.TpAccident" >
+    insert into t_tp_accident (tp_id, msg_id, 
+       create_time)
+    values ( #{tpId,jdbcType=BIGINT}, #{msgId,jdbcType=BIGINT}, 
+       #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.TpAccident" >
+    update t_tp_accident
+    <set >
+      <if test="tpId != null" >
+        tp_id = #{tpId,jdbcType=BIGINT},
+      </if>
+      <if test="msgId != null" >
+        msg_id = #{msgId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectList" parameterType="tpAccident" resultMap="BaseResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from t_tp_accident
+    where 1=1
+    <if test="tpId!=null">
+    	and tp_id=#{tpId}
+    </if>
+    <if test="msgId!=null">
+    	and msg_id=#{msgId}
+    </if>
+    <if test="status!=null">
+    	and status=#{status}
+    </if>
+  </select>
+</mapper>

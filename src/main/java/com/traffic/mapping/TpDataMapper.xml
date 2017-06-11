@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.TpDataMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.TpData" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="tp_id" property="tpId" jdbcType="BIGINT" />
+    <result column="ins_id" property="insId" jdbcType="BIGINT" />
+     <result column="msg_id" property="msgId" jdbcType="BIGINT" />
+    <result column="media_url" property="mediaUrl" jdbcType="VARCHAR" />
+    <result column="media_type" property="mediaType" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, tp_id, media_url, media_type, create_time,msg_id,type,ins_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_tp_data
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_tp_data
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.TpData" >
+    insert into t_tp_data ( tp_id, media_url, 
+      media_type, create_time,msg_id,type,ins_id)
+    values ( #{tpId,jdbcType=BIGINT}, #{mediaUrl,jdbcType=VARCHAR}, 
+      #{mediaType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},#{msgId},#{type},#{insId})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.TpData" >
+    update t_tp_data
+    <set >
+      <if test="tpId != null" >
+        tp_id = #{tpId,jdbcType=BIGINT},
+      </if>
+      <if test="mediaUrl != null" >
+        media_url = #{mediaUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaType != null" >
+        media_type = #{mediaType,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectList" parameterType="tpData" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from t_tp_data
+    where 
+    1=1
+    <if test="msgId!=null">
+	    and msg_id = #{msgId,jdbcType=BIGINT}
+    </if>
+    <if test="mediaType!=null">
+    	and media_type = #{mediaType}
+    </if>
+    <if test="type!=null">
+    	and type=#{type}
+    </if>
+    <if test="insId!=null">
+    	and ins_id=#{insId}
+    </if>
+  </select>
+</mapper>

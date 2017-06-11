@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.OpLogMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.OpLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="operation_class" property="operationClass" jdbcType="VARCHAR" />
+    <result column="operation_method" property="operationMethod" jdbcType="VARCHAR" />
+    <result column="operation" property="operation" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.traffic.vo.OpLog" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, user_name, operation_class, operation_method, operation, create_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_op_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_op_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteBatchById" parameterType="list">
+  	delete from t_op_log where id in
+  	<foreach collection="list" item="id" open="(" separator="m," close=")">
+  		#{id}
+  	</foreach>
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.OpLog" >
+    insert into t_op_log (user_id, user_name, 
+      operation_class, operation_method, operation, 
+      create_time, content)
+    values (#{userId,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, 
+      #{operationClass,jdbcType=VARCHAR}, #{operationMethod,jdbcType=VARCHAR}, #{operation,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+ <select id="selectList" parameterType="com.traffic.vo.OpLog" resultMap="BaseResultMap">
+ 	select
+ 	<include refid="Base_Column_List" />
+ 	from t_op_log
+ 	<where>
+ 		<if test="userName != null">
+ 			user_name like concat('%',#{userName},'%')
+ 		</if>
+ 		<if test="operationClass != null">
+ 			and operation_class = #{operationClass}
+ 		</if>
+ 		<if test="operationMethod != null">
+ 			and operation_method = #{operationMethod}
+ 		</if>
+ 		<if test="operation != null">
+ 			and operation = #{operation}
+ 		</if>
+ 	</where>
+ 	order by id desc
+ </select>
+</mapper>

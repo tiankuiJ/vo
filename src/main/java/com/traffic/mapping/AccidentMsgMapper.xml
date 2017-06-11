@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.AccidentMsgMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.AccidentMsg" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="tp_id" property="tpId" jdbcType="BIGINT" />
+    <result column="pt_id" property="ptId" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="push_count" property="pushCount" jdbcType="BIGINT" />
+     <result column="lon" property="lon" jdbcType="DOUBLE" />
+    <result column="lat" property="lat" jdbcType="DOUBLE" />
+    <result column="handle_type" property="handleType" jdbcType="VARCHAR" />
+    <result column="handle_time" property="handleTime" jdbcType="TIMESTAMP" />
+    <result column="receive_time" property="receviceTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, tp_id, status, create_time,push_count,lon,lat,handle_type,handle_time,pt_id,receive_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_accident_msg
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_accident_msg
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.AccidentMsg"  useGeneratedKeys="true" keyProperty="id">
+    insert into t_accident_msg ( tp_id, status, 
+      create_time,lon,lat,handle_type)
+    values ( #{tpId,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP},#{lon},#{lat},#{handleType})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.AccidentMsg" >
+    update t_accident_msg
+    <set >
+      <if test="tpId != null" >
+        tp_id = #{tpId,jdbcType=BIGINT},
+      </if>
+      <if test="ptId != null" >
+        pt_id = #{ptId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="handleTime != null" >
+        handle_time = #{handleTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receviceTime != null" >
+        receive_time = #{receviceTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pushCount != null">
+      	push_count = #{pushCount}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectList" parameterType="msg" resultMap="BaseResultMap">
+  		select 
+    <include refid="Base_Column_List" />
+    from t_accident_msg
+  </select>
+</mapper>

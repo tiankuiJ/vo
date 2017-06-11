@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.UserMapper">
+	<resultMap id="BaseResultMap" type="com.traffic.vo.User">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="pass_word" property="passWord" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="birth_day" property="birthDay" jdbcType="DATE" />
+		<result column="ID_number" property="idNumber" jdbcType="VARCHAR" />
+		<result column="driver_license" property="driverLicense"
+			jdbcType="VARCHAR" />
+		<result column="license_date" property="licenseDate" jdbcType="DATE" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+		<result column="head_img" property="headImg" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="CHAR" />
+		<result column="deleted" property="deleted" jdbcType="VARCHAR" />
+		<result column="license_imgs_front" property="licenseImgsFront"
+			jdbcType="VARCHAR" />
+		<result column="license_imgs_back" property="licenseImgsBack"
+			jdbcType="VARCHAR" />
+		<result column="key_code" property="keyCode" jdbcType="VARCHAR" />
+		<result column="latitude" property="latitude" jdbcType="VARCHAR" />
+		<result column="longitude" property="longitude" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="CHAR" />
+		<result column="current_location" property="currentLocation" jdbcType="VARCHAR"/>
+	</resultMap>
+	<resultMap type="com.traffic.bo.UserBo" id="BaseResultBoMap"
+		extends="BaseResultMap">
+		<result column="roleId" property="roleId" jdbcType="BIGINT" />
+		<result column="roleMark" property="roleMark" jdbcType="VARCHAR" />
+		<result column="roleName" property="roleName" jdbcType="VARCHAR" />
+		<result column="orgInsId" property="orgInsId" jdbcType="BIGINT" />
+		<result column="orgInsName" property="orgInsName" jdbcType="VARCHAR" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="county" property="county" jdbcType="VARCHAR" />
+		<result column="orgType" property="orgType" jdbcType="CHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		a.id, a.user_name, a.pass_word, a.name, a.sex, a.birth_day,
+		a.ID_number,
+		a.driver_license, a.license_date,
+		a.address, a.email,
+		a.nick_name, a.head_img, a.type,
+		a.deleted,a.license_imgs_front,a.license_imgs_back,
+		a.key_code,a.latitude,a.longitude,a.status,a.current_location
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from t_user a
+		where a.id = #{id,jdbcType=BIGINT}
+	</select>
+	<select id="selectUserBo" parameterType="com.traffic.vo.User"
+		resultMap="BaseResultBoMap">
+		select
+		<include refid="Base_Column_List" />
+		,
+		b.role_id as roleId,c.name as roleName,c.mark as roleMark
+		<if test="type == '交警' or type == '保险公司' or type == '拖车公司' ">
+			,b.org_ins_id as orgInsId,d.name as orgInsName
+		</if>
+		<if test="type == '交警'">
+			,d.province,d.city,d.county,d.type as orgType
+		</if>
+		from t_user a
+		left join t_auth b on a.id=b.user_id
+		<if test="type == '交警'">
+			left join t_organization d on b.org_ins_id=d.id
+		</if>
+		<if test="type == '保险公司'">
+			left join t_ins_company d on b.org_ins_id=d.id
+		</if>
+		<if test="type == '拖车公司'">
+			left join t_trailer d on b.org_ins_id=d.id
+		</if>
+		left join t_role c on b.role_id=c.id
+		<where>
+			<if test="id != null">
+				and a.id = #{id}
+			</if>
+			<if test="userName != null">
+				and a.user_name = #{userName}
+			</if>
+			<if test="passWord != null">
+				and a.pass_word = #{passWord}
+			</if>
+		</where>
+	</select>
+	<select id="selectType" parameterType="com.traffic.vo.User"
+		resultMap="BaseResultMap">
+		select type from t_user
+		<where>
+			<if test="userName != null">
+				and user_name = #{userName}
+			</if>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+		</where>
+	</select>
+	<select id="findByUserName" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select id,user_name from t_user where user_name =
+		#{userName}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from t_user
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.traffic.vo.User"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into t_user (user_name,
+		pass_word,
+		name, sex, birth_day, ID_number,
+		driver_license,
+		license_date, address,
+		email, nick_name, head_img,
+		type, deleted,
+		license_imgs_front,license_imgs_back,latitude,longitude,status
+		)
+		values
+		(#{userName,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR},
+		#{birthDay,jdbcType=DATE}, #{idNumber,jdbcType=VARCHAR},
+		#{driverLicense,jdbcType=VARCHAR}, #{licenseDate,jdbcType=DATE},
+		#{address,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},
+		#{nickName,jdbcType=VARCHAR}, #{headImg,jdbcType=VARCHAR},
+		#{type,jdbcType=CHAR}, #{deleted,jdbcType=VARCHAR},
+		#{licenseImgsFront,jdbcType=LONGVARCHAR},#{licenseImgsBack,jdbcType=LONGVARCHAR},
+		#{latitude,jdbcType=VARCHAR}, #{longitude,jdbcType=VARCHAR},
+		#{status,jdbcType=CHAR}
+		)
+	</insert>
+	<update id="updateKeyCode" parameterType="java.lang.Long">
+		update t_user set
+		key_code = null where id = #{id}
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.User">
+		update t_user
+		<set>
+			<if test="userName != null">
+				user_name = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="passWord != null">
+				pass_word = #{passWord,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				sex = #{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="birthDay != null">
+				birth_day = #{birthDay,jdbcType=DATE},
+			</if>
+			<if test="idNumber != null">
+				ID_number = #{idNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="driverLicense != null">
+				driver_license = #{driverLicense,jdbcType=VARCHAR},
+			</if>
+			<if test="licenseDate != null">
+				license_date = #{licenseDate,jdbcType=DATE},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				email = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="nickName != null">
+				nick_name = #{nickName,jdbcType=VARCHAR},
+			</if>
+			<if test="headImg != null">
+				head_img = #{headImg,jdbcType=VARCHAR},
+			</if>
+			<if test="deleted != null">
+				deleted = #{deleted,jdbcType=VARCHAR},
+			</if>
+			<if test="licenseImgsFront != null">
+				license_imgs_front =
+				#{licenseImgsFront,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="licenseImgsBack != null">
+				license_imgs_back =
+				#{licenseImgsBack,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="keyCode != null">
+				key_code = #{keyCode},
+			</if>
+			<if test="latitude != null">
+				latitude = #{latitude},
+			</if>
+			<if test="longitude != null">
+				longitude = #{longitude},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="idNumber != null">
+				ID_number = #{idNumber},
+			</if>
+			<if test="currentLocation != null">
+				current_location = #{currentLocation}
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="changeDeleted" parameterType="list">
+		update t_user set deleted=1,status='休息中' where id in
+		<foreach collection="list" item="id" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</update>
+	<update id="deleteRecovery" parameterType="list">
+		update t_user set deleted=0,status='休息中' where id in
+		<foreach collection="list" item="id" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</update>
+	<select id="getList" parameterType="com.traffic.bo.UserBo"
+		resultMap="BaseResultBoMap">
+		select
+		<include refid="Base_Column_List" />
+		,
+		c.name as roleName
+		from t_user a,t_auth b,t_role c
+		<where>
+			a.id=b.user_id and b.role_id = c.id
+			<if test="type != null">
+				and a.type = #{type}
+			</if>
+			<if test="orgInsId != null">
+				and b.org_ins_id = #{orgInsId}
+			</if>
+			<if test="name != null">
+				and a.name = #{name}
+			</if>
+			<if test="status != null">
+				and a.status = #{status}
+			</if>
+			<if test="deleted != null">
+				and a.deleted = #{deleted}
+			</if>
+			<if test="searchStr != null">
+				and (
+					a.name like concat ('%',#{searchStr},'%') or
+					a.nick_name like concat ('%',#{searchStr},'%') or
+					a.user_name like concat ('%',#{searchStr},'%')
+				)
+			</if>
+			<if test="orgIds != null">
+				and b.org_ins_id in
+				<foreach collection="orgIds" item="oid" open="(" separator="," close=")">
+						#{oid}
+				</foreach> 
+			</if>
+		</where>
+	</select>
+	<select id="selectInsCompanyAdmin" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select a.id,a.user_name,a.name,a.key_code from
+		t_user a,t_auth b,t_role
+		c
+		where a.id=b.user_id and b.role_id=c.id and c.mark='insAdmin' and
+		b.org_ins_id = #{insCompanyId}
+	</select>
+	<select id="selectTraAdmin" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select a.id,a.user_name,a.name,a.key_code from
+		t_user a,t_auth b,t_role
+		c
+		where a.id=b.user_id and b.role_id=c.id and c.mark='traAdmin' and
+		b.org_ins_id = #{traId}
+	</select>
+	<update id="rePassWordByUserName" parameterType="com.traffic.vo.User">
+		update t_user
+		set pass_word = #{passWord} where user_name = #{userName}
+	</update>
+	<select id="selectByKeyCode" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select id,user_name,pass_word,type from t_user where
+		key_code = #{keyCode}
+	</select>
+	
+	<select id="selectPoliceByIds" parameterType="com.traffic.bo.UserBo" resultMap="BaseResultMap">
+		select  id, user_name, 
+		key_code  from t_user where status='执勤中'
+		<if test="notIds!=null and notIds.size()>0">
+			and id  in
+			<foreach item="item" index="index" collection="notIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+	
+	
+	
+	<select id="selectPoliceByLocation" parameterType="com.traffic.bo.UserBo"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user a,t_auth b,t_organization c where a.id=b.user_id and
+		b.org_ins_id=c.id and c.type='中队'and a.type='交警' and a.status='执勤中'
+		AND a.longitude>1
+		<if test="notIds!=null and notIds.size()>0">
+			and a.id not in
+			<foreach item="item" index="index" collection="notIds" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		ORDER BY ROUND(
+		6378.138 * 2 * ASIN(
+		SQRT(
+		POW(
+		SIN(
+		(
+		${latitude} * PI() / 180 -
+		latitude * PI() / 180
+		) / 2
+		),
+		2
+		) +
+		COS(${latitude} * PI() /
+		180) *
+		COS(latitude * PI() / 180) * POW(
+		SIN(
+		(
+		${longitude} * PI() / 180 -
+		longitude *
+		PI() / 180
+		) / 2
+		),
+		2
+		)
+		)
+		) * 1000
+		)
+		asc
+	</select>
+	<select id="selectByInsCompany" parameterType="com.traffic.bo.UserBo"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user a,t_auth b,t_role c
+		where a.id=b.user_id and b.role_id=c.id
+		and c.type="保险公司" and a.deleted=0
+		and b.org_ins_id = #{orgInsId} AND
+		a.longitude>1
+		ORDER BY ROUND(
+		6378.138 * 2 * ASIN(
+		SQRT(
+		POW(
+		SIN(
+		(
+		${latitude} * PI() / 180 -
+		a.latitude * PI() / 180
+		) / 2
+		),
+		2
+		) +
+		COS(${latitude} * PI() /
+		180) *
+		COS(a.latitude * PI() / 180) * POW(
+		SIN(
+		(
+		${longitude} * PI() / 180 -
+		a.longitude *
+		PI() / 180
+		) / 2
+		),
+		2
+		)
+		)
+		) * 1000
+		) asc
+	</select>
+	<select id="selectByTraCompany" parameterType="com.traffic.bo.UserBo" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user a,t_auth b,t_role c
+		where a.id=b.user_id and b.role_id=c.id
+		and c.type="拖车公司" and a.deleted=0
+		and b.org_ins_id = #{orgInsId}
+	</select>
+	<select id="getListByType" parameterType="com.traffic.vo.User" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user a
+		<where>
+			<if test="type != null">
+				a.type = #{type}
+			</if>
+			<if test="userName != null">
+				and a.user_name = #{userName}
+			</if>
+			<if test="name != null">
+				and a.name = #{name}
+			</if>
+			<if test="status != null">
+				and a.status = #{status}
+			</if>
+			<if test="address != null">
+				and a.address like concat('%',#{address},'%') 
+			</if>
+			<if test="deleted != null">
+				and a.deleted = #{deleted}
+			</if>
+			<if test="searchStr != null">
+				and (
+					a.name like concat ('%',#{searchStr},'%') or
+					a.nick_name like concat ('%',#{searchStr},'%') or
+					a.user_name like concat ('%',#{searchStr},'%')
+				)
+			</if>
+		</where>
+	</select>
+	
+	<update id="changeTypeToSecur" parameterType="list">
+		update t_user set type = '安全员' where id in
+		<foreach collection="list" item="id" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</update>
+	<update id="changeTypeToMember" parameterType="list">
+		update t_user set type = '用户' where id in
+		<foreach collection="list" item="id" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</update>
+	<delete id="deleteList">
+		delete from t_user where id in
+		<foreach collection="list" item="id" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	
+	<select id="selectPersonByOrg" parameterType="com.traffic.bo.UserBo" resultMap="BaseResultBoMap">
+		select
+		a.id,a.nick_name,a.name,c.name as roleName
+		from t_user a,t_auth b,t_role c
+		where a.id=b.user_id and b.role_id=c.id
+		and c.type=#{type} and a.deleted=0
+		and b.org_ins_id = #{orgInsId}
+		<if test="searchStr != null">
+			and
+			concat(a.nick_name,a.name,c.name) like CONCAT('%','${searchStr}','%') 
+		</if>
+	</select>
+	
+	<select id="selectPoliceBoList" resultType="policeBo">
+		SELECT a.id as id, a.`name` as name,a.nick_name as phone,c.`name` as orgName  from t_user a,t_auth b,t_organization c
+		WHERE a.id=b.user_id AND b.org_ins_id=c.id AND a.type='交警'
+	</select>	
+	<insert id="addBatch" parameterType="list" useGeneratedKeys="true" keyProperty="id">
+		insert into t_user (user_name,
+		pass_word,
+		name, sex, birth_day, ID_number,
+		driver_license,
+		license_date, address,
+		email, nick_name, head_img,
+		type, deleted,
+		license_imgs_front,license_imgs_back,latitude,longitude,status
+		)
+		values
+		<foreach collection="list" item="m" separator=",">
+			(#{m.userName,jdbcType=VARCHAR}, #{m.passWord,jdbcType=VARCHAR},
+			#{m.name,jdbcType=VARCHAR}, #{m.sex,jdbcType=VARCHAR},
+			#{m.birthDay,jdbcType=DATE}, #{m.idNumber,jdbcType=VARCHAR},
+			#{m.driverLicense,jdbcType=VARCHAR}, #{m.licenseDate,jdbcType=DATE},
+			#{m.address,jdbcType=VARCHAR},
+			#{m.email,jdbcType=VARCHAR},
+			#{m.nickName,jdbcType=VARCHAR}, #{m.headImg,jdbcType=VARCHAR},
+			#{m.type,jdbcType=CHAR}, #{m.deleted,jdbcType=VARCHAR},
+			#{m.licenseImgsFront,jdbcType=LONGVARCHAR},#{m.licenseImgsBack,jdbcType=LONGVARCHAR},
+			#{m.latitude,jdbcType=VARCHAR}, #{m.longitude,jdbcType=VARCHAR},
+			#{m.status,jdbcType=CHAR}
+			)
+		</foreach>
+	</insert>
+	<select id="getListByJj" parameterType="com.traffic.bo.UserBo"
+		resultMap="BaseResultBoMap">
+		select
+		<include refid="Base_Column_List" />
+		,
+		c.name as roleName,d.name as orgInsName
+		from t_user a,t_auth b,t_role c,t_organization d
+		<where>
+			a.id=b.user_id and b.role_id = c.id and b.org_ins_id = d.id
+			<if test="type != null">
+				and a.type = #{type}
+			</if>
+			<if test="orgInsId != null">
+				and b.org_ins_id = #{orgInsId}
+			</if>
+			<if test="name != null">
+				and a.name = #{name}
+			</if>
+			<if test="status != null">
+				and a.status = #{status}
+			</if>
+			<if test="deleted != null">
+				and a.deleted = #{deleted}
+			</if>
+			<if test="searchStr != null">
+				and (
+					a.name like concat ('%',#{searchStr},'%') or
+					a.nick_name like concat ('%',#{searchStr},'%') or
+					a.user_name like concat ('%',#{searchStr},'%')
+				)
+			</if>
+			<if test="orgIds != null">
+				and b.org_ins_id in
+				<foreach collection="orgIds" item="oid" open="(" separator="," close=")">
+						#{oid}
+				</foreach> 
+			</if>
+		</where>
+	</select>
+</mapper>

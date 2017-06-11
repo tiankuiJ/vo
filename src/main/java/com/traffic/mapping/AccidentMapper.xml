@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.AccidentMapper">
+	<resultMap id="BaseResultMap" type="com.traffic.vo.Accident">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="msg_id" property="msgId" jdbcType="BIGINT" />
+		<result column="trailer_id" property="trailerId" jdbcType="BIGINT" />
+		<result column="ic_user_id" property="icUserId" jdbcType="BIGINT" />
+		<result column="user_id" property="userId" jdbcType="BIGINT" />
+		<result column="c_id" property="cId" jdbcType="BIGINT" />
+		<result column="license" property="license" jdbcType="VARCHAR" />
+		<result column="card_img_z" property="cardImgZ" jdbcType="VARCHAR" />
+		<result column="card_img_f" property="cardImgF" jdbcType="VARCHAR" />
+		<result column="lcard_img_z" property="lCardImgZ" jdbcType="VARCHAR" />
+		<result column="lcard_img_f" property="lCardImgF" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="handle_type" property="handleType" jdbcType="VARCHAR" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="recive_time" property="reciveTime" jdbcType="TIMESTAMP" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="lon" property="lon" jdbcType="DOUBLE" />
+		<result column="lat" property="lat" jdbcType="DOUBLE" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="county" property="county" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="voice_remark" property="voiceRemark" jdbcType="VARCHAR" />
+		<result column="voice_result" property="voiceResult" jdbcType="VARCHAR" />
+		<result column="car_id" property="carId" jdbcType="INTEGER" />
+		<result column="weather" property="weather" jdbcType="VARCHAR" />
+		<result column="ins_company_id" property="insCompanyId"
+			jdbcType="INTEGER" />
+		<result column="policy_number" property="policyNumber"
+			jdbcType="VARCHAR" />
+		<result column="policy_img" property="policyImg" jdbcType="VARCHAR" />
+		<result column="driver_name" property="driverName" jdbcType="VARCHAR" />
+		<result column="result" property="result" jdbcType="VARCHAR" />
+		<result column="traffic_type" property="trafficType" jdbcType="VARCHAR" />
+		<result column="id_number" property="idNumber" jdbcType="VARCHAR" />
+		<result column="need_trailer" property="needTrailer" jdbcType="INTEGER" />
+		<result column="safety_id" property="safetyId" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, msg_id, user_id, license, card_img_z, card_img_f,
+		phone,
+		handle_type,
+		create_date, address, lon, lat,
+		province,city,county,status,remark,voice_remark,car_id,weather,ins_company_id,policy_number,policy_img,driver_name,result,traffic_type,voice_result,recive_time,need_trailer,trailer_id,lcard_img_f,lcard_img_z,safety_id,c_id,id_number,ic_user_id
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from t_accident
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+		t_accident
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.traffic.vo.Accident"
+		keyProperty="id" useGeneratedKeys="true">
+		insert into t_accident ( msg_id,
+		user_id,
+		license, card_img_z, card_img_f,
+		phone, handle_type,
+		create_date, address, lon,
+		lat,
+		province,city,county,remark,voice_remark,car_id,weather,ins_company_id,policy_number,policy_img,driver_name,result,traffic_type,voice_result,recive_time,status,need_trailer,trailer_id,lcard_img_f,lcard_img_z,safety_id,c_id,id_number,ic_user_id)
+		values ( #{msgId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT},
+		#{license,jdbcType=VARCHAR}, #{cardImgZ,jdbcType=VARCHAR},
+		#{cardImgF,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR},
+		#{handleType,jdbcType=VARCHAR},
+		#{createDate,jdbcType=TIMESTAMP},
+		#{address,jdbcType=VARCHAR},
+		#{lon,jdbcType=DOUBLE},
+		#{lat,jdbcType=DOUBLE},
+		#{province},#{city},#{county},#{remark},#{voiceRemark},#{carId},#{weather},#{insCompanyId},#{policyNumber},#{policyImg},#{driverName},#{result},#{trafficType},#{voiceResult},#{reciveTime},#{status},#{needTrailer},#{trailerId},#{lCardImgF},#{lCardImgZ},#{safetyId},#{cId},#{idNumber},#{icUserId})
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.Accident">
+		update t_accident
+		<set>
+			<if test="msgId != null">
+				msg_id = #{msgId,jdbcType=BIGINT},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=BIGINT},
+			</if>
+			<if test="license != null">
+				license = #{license,jdbcType=VARCHAR},
+			</if>
+			<if test="cardImgZ != null">
+				card_img_z = #{cardImgZ,jdbcType=VARCHAR},
+			</if>
+			<if test="cardImgF != null">
+				card_img_f = #{cardImgF,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="handleType != null">
+				handle_type = #{handleType,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="lon != null">
+				lon = #{lon,jdbcType=DOUBLE},
+			</if>
+			<if test="lat != null">
+				lat = #{lat,jdbcType=DOUBLE},
+			</if>
+
+			<if test="province != null">
+				province = #{province,jdbcType=DOUBLE},
+			</if>
+			<if test="city != null">
+				city = #{city,jdbcType=DOUBLE},
+			</if>
+			<if test="county != null">
+				county = #{county,jdbcType=BIGINT},
+			</if>
+
+			<if test="status != null">
+				status = #{status,jdbcType=BIGINT},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=BIGINT},
+			</if>
+			<if test="voiceRemark != null">
+				voice_remark = #{voiceRemark,jdbcType=BIGINT},
+			</if>
+			<if test="result != null">
+				result = #{result,jdbcType=BIGINT},
+			</if>
+			<if test="trafficType != null">
+				traffic_type = #{trafficType,jdbcType=BIGINT},
+			</if>
+			<if test="reciveTime!=null">
+				recive_time=#{reciveTime}
+			</if>
+			<if test="icUserId!=null">
+				ic_user_id=#{icUserId}
+			</if>
+			<if test="trailerId!=null">
+				trailer_id=#{trailerId}
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<!-- //查询当前事故是否已有数据 -->
+	<select id="selectRepeat" parameterType="accident" resultType="accident">
+		SELECT
+		id,car_id as carId
+		FROM
+		t_accident
+		WHERE safety_id is null and
+		<!-- ROUND( -->
+		<!-- 6378.138 * 2 * ASIN( -->
+		<!-- SQRT( -->
+		<!-- POW( -->
+		<!-- SIN( -->
+		<!-- ( -->
+		<!-- ${lat} * PI() / 180 - lat * PI() / 180 -->
+		<!-- ) / 2 -->
+		<!-- ), -->
+		<!-- 2 -->
+		<!-- ) + COS(${lat} * PI() / -->
+		<!-- 180) * COS(lat * PI() / 180) * POW( -->
+		<!-- SIN( -->
+		<!-- ( -->
+		<!-- ${lon} * PI() / 180 - lon * -->
+		<!-- PI() / 180 -->
+		<!-- ) / 2 -->
+		<!-- ), -->
+		<!-- 2 -->
+		<!-- ) -->
+		<!-- ) -->
+		<!-- ) * 1000 -->
+		<!-- ) <![CDATA[ < ]]>50 and -->
+		create_date <![CDATA[ >= ]]>
+		#{createDate}
+		<if test="carId!=null">
+			and car_id=#{carId}
+		</if>
+		<if test="status!=null">
+			and status=#{status}
+		</if>
+	</select>
+
+
+	<select id="selectAccidentList" parameterType="accident"
+		resultType="accidentBo">
+		SELECT a.msg_id as
+		msgId,a.address,a.create_date as
+		createDate,a.lat,a.lon,a.province,a.city,a.county,msg.status,a.handle_type
+		as handleType,count(a.id) as carCount,a.safety_id as safetyId FROM t_accident a,t_accident_msg msg
+		where
+		a.msg_id=msg.id
+		<if test="tpId!=null">
+			<if test="viewResource!=null">
+				and (msg.tp_id=#{tpId})
+			</if>
+			<if test="viewResource==null">
+				and (msg.tp_id=#{tpId} or a.safety_id is not null)
+			</if>
+		</if>
+		<if test="userId!=null">
+			and a.user_id=#{userId}
+		</if>
+		<if test="msgId!=null">
+			and msg.id=#{msgId}
+		</if>
+		<if test="insCompanyId!=null">
+			and a.ins_company_id=#{insCompanyId}
+		</if>
+		<if test="searchKey!=null">
+			and
+			concat(a.province,a.city,a.county,a.address,msg.status,a.driver_name,a.phone)
+			like CONCAT('%','${searchKey}','%')
+		</if>
+		GROUP BY a.msg_id
+	</select>
+
+
+	<select id="selectListFinish" parameterType="accident"
+		resultType="accidentBo">
+		SELECT a.msg_id as
+		msgId,a.address,a.create_date as
+		createDate,a.lat,a.lon,a.province,a.city,a.county,msg.status,a.handle_type
+		as handleType,a.safety_id as safetyId,count(a.id) as carCount FROM t_accident a,t_accident_msg msg
+		where
+		a.msg_id=msg.id and (a.status='已处理' or a.status = '已取责任书' or a.status
+		='已在交警队处理')
+		<if test="tpId!=null">
+			and msg.tp_id=#{tpId}
+		</if>
+		<if test="userId!=null">
+			and a.user_id=#{userId}
+		</if>
+		<if test="searchKey!=null">
+			and
+			concat(a.province,a.city,a.county,a.address,msg.status,a.driver_name,a.phone)
+			like CONCAT('%','${searchKey}','%')
+		</if>
+		GROUP BY a.msg_id
+	</select>
+
+	<select id="selectListNoFinish" parameterType="accident"
+		resultType="accidentBo">
+		SELECT a.msg_id as
+		msgId,a.address,a.create_date as
+		createDate,a.lat,a.lon,a.province,a.city,a.county,msg.status,a.handle_type
+		as handleType,a.safety_id as safetyId,count(a.id) as carCount FROM t_accident a,t_accident_msg msg
+		where
+		a.msg_id=msg.id and a.status='未处理'
+		<if test="tpId!=null">
+			and msg.tp_id=#{tpId}
+		</if>
+		<if test="userId!=null">
+			and a.user_id=#{userId}
+		</if>
+		<if test="searchKey!=null">
+			and
+			concat(a.province,a.city,a.county,a.address,msg.status,a.driver_name,a.phone)
+			like CONCAT('%','${searchKey}','%')
+		</if>
+		GROUP BY a.msg_id
+	</select>
+
+
+
+
+	<select id="selectAccidentListByUser" parameterType="accident"
+		resultType="accidentBo">
+		SELECT a.msg_id as
+		msgId,a.address,a.create_date as
+		createDate,a.lat,a.lon,a.province,a.city,a.county,a.status,a.handle_type
+		as handleType FROM t_accident a,t_accident_msg msg
+		where
+		a.msg_id=msg.id
+		<if test="userId!=null">
+			and a.user_id=#{userId}
+		</if>
+		<if test="msgId!=null">
+			and msg.id=#{msgId}
+		</if>
+		<if test="searchKey!=null">
+			and
+			concat(a.province,a.city,a.county,a.address,msg.status,a.driver_name,a.phone)
+			like CONCAT('%','${searchKey}','%')
+		</if>
+		GROUP BY a.msg_id
+	</select>
+
+
+	<select id="selectListFinishByUser" parameterType="accident"
+		resultType="accidentBo">
+		SELECT a.msg_id as
+		msgId,a.address,a.create_date as
+		createDate,a.lat,a.lon,a.province,a.city,a.county,a.status,a.handle_type
+		as handleType FROM t_accident a,t_accident_msg msg
+		where
+		a.msg_id=msg.id and (a.status='已处理' or a.status = '已取责任书' or a.status
+		='已在交警队处理')
+		<if test="userId!=null">
+			and a.user_id=#{userId}
+		</if>
+		<if test="searchKey!=null">
+			and
+			concat(a.province,a.city,a.county,a.address,msg.status,a.driver_name,a.phone)
+			like CONCAT('%','${searchKey}','%')
+		</if>
+		GROUP BY a.msg_id
+	</select>
+
+	<select id="selectListNoFinishByUser" parameterType="accident"
+		resultType="accidentBo">
+		SELECT a.msg_id as
+		msgId,a.address,a.create_date as
+		createDate,a.lat,a.lon,a.province,a.city,a.county,a.status,a.handle_type
+		as handleType FROM t_accident a,t_accident_msg msg
+		where
+		a.msg_id=msg.id and a.status='未处理'
+		<if test="userId!=null">
+			and a.user_id=#{userId}
+		</if>
+		<if test="searchKey!=null">
+			and
+			concat(a.province,a.city,a.county,a.address,msg.status,a.driver_name,a.phone)
+			like CONCAT('%','${searchKey}','%')
+		</if>
+		GROUP BY a.msg_id
+	</select>
+
+	<select id="selectByUser" parameterType="accident" resultType="accident">
+		select
+		<include refid="Base_Column_List" />
+		from t_accident where user_id=#{userId}
+		<if test="status!=null">
+			and status=#{status}
+		</if>
+	</select>
+
+	<select id="selectByMsgId" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_accident where msg_id=#{msgId}
+	</select>
+
+	<select id="selectNoHandlePolice" resultType="accident">
+		SELECT
+		a.id as msgId,c.safety_id as safetyId
+		FROM
+		t_accident_msg a,
+		t_accident c
+		WHERE a.id=c.msg_id and
+		a.id NOT IN (
+		SELECT
+		msg_id
+		FROM
+		t_tp_accident
+		) AND
+		a.`status`='未处理' and a.handle_type!='协商处理'
+		GROUP BY
+		a.id
+	</select>
+	
+	<select id="selectNoHandlePoliceAdmin" resultType="accident">
+		SELECT
+		a.id as msgId,c.safety_id as safetyId
+		FROM
+		t_accident_msg a,
+		t_accident c
+		WHERE a.id=c.msg_id and
+		a.id NOT IN (
+		SELECT
+		msg_id
+		FROM
+		t_tp_accident
+		) AND
+		a.`status`='未处理' and a.handle_type='协助处理'
+		GROUP BY
+		a.id
+	</select>
+	
+	
+	
+	<select id="selectNoHandleIns24" resultType="accident">
+		SELECT
+		 a.msg_id as msgId, c.safety_id as safetyId
+		FROM
+		t_consult_ins a,
+		t_accident_msg b,
+		t_accident c
+		WHERE
+		a.msg_id = b.id AND b.handle_type = '协商处理' and b.id=c.msg_id 
+		AND ((a.result = '未处理'
+		 AND b.create_time <![CDATA[ <   ]]> DATE_ADD(NOW(),INTERVAL
+		-5 MINUTE))
+		OR (a.result='交警处理' AND b.`status`='未处理'))
+		GROUP BY
+		a.msg_id
+	</select>
+	
+
+	<select id="selectNoHandleIns" resultType="accident">
+		SELECT
+		acc.id,acc.msg_id as msgId,acc.ins_company_id as insCompanyId
+		FROM
+		t_accident acc
+		WHERE
+		id NOT IN (
+		SELECT
+		ta.ac_id
+		FROM
+		t_inc_accident ta,
+		t_user a,
+		t_auth b,
+		t_role c
+		WHERE
+		a.id = b.user_id
+		AND b.role_id = c.id
+		AND c.type = "保险公司"
+		AND a.deleted = 0
+		AND ta.inc_id = a.id
+		)
+		GROUP BY
+		id
+	</select>
+
+	<select id="selectNoHandleTrailer" resultType="accident">
+		SELECT
+		acc.id,acc.msg_id as
+		msgId,acc.lon,acc.lat,acc.phone,acc.driver_name,acc.address,acc.handle_type as handleType
+		FROM
+		t_accident acc
+		where need_trailer =1 and trailer_id is NULL
+	</select>
+
+	<select id="selectListByIns" parameterType="consultIns"
+		resultType="accidentBo">
+		SELECT a.msg_id as
+		msgId,a.address,a.create_date as
+		createDate,a.lat,a.lon,a.province,a.city,a.county,a.handle_type
+		as
+		handleType,b.result as status,a.safety_id as safetyId,count(a.id) as carCount
+		FROM
+		t_accident a, t_consult_ins b
+		where
+		a.msg_id = b.msg_id AND b.ins_id=#{insId}
+		<if test="result!=null">
+			<if test="result=='未处理'">
+				and b.result=#{result}
+			</if>
+			<if test="result!='未处理'">
+				and b.result!='未处理'
+			</if>
+		</if>
+		GROUP BY a.msg_id
+	</select>
+
+	<select id="selectListBySafety" parameterType="accident" resultType="accidentBo">
+		SELECT
+		a.msg_id AS msgId,
+		a.address,
+		a.create_date AS createDate,
+		a.lat,
+		a.lon,
+		a.province,
+		a.city,
+		a.county,
+		a. STATUS,
+		a.handle_type AS handleType,a.safety_id as safetyId,count(a.id) as carCount
+		FROM
+		t_accident a,
+		t_accident_msg msg
+		WHERE
+		a.msg_id = msg.id and a.safety_id=#{safetyId}
+		<if test="status!=null">
+			<if test="status=='未处理'">
+				and a.status=#{status}
+			</if>
+			<if test="status!='未处理'">
+				and a.status!='未处理'
+			</if>
+		</if>
+		GROUP BY
+		a.msg_id
+	</select>
+</mapper>

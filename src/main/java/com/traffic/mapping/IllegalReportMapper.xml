@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.IllegalReportMapper">
+	<resultMap id="BaseResultMap" type="com.traffic.bo.IllegalReportBo">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="user_id" property="userId" jdbcType="BIGINT" />
+		<result column="lon" property="lon" jdbcType="DOUBLE" />
+		<result column="lat" property="lat" jdbcType="DOUBLE" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="CHAR" />
+		<result column="tp_id" property="tpId" jdbcType="BIGINT" />
+		<result column="proposal" property="proposal" jdbcType="VARCHAR" />
+		<result column="anonymous" property="anonymous" jdbcType="VARCHAR" />
+		<result column="tpName" property="tpName" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="voice_remark" property="voiceRemark" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, lon, lat, address, type, create_time, status, tp_id,
+		proposal,anonymous,remark,voice_remark
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from t_illegal_report
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from t_illegal_report
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.traffic.vo.IllegalReport" useGeneratedKeys="true" keyProperty="id">
+		insert into t_illegal_report ( user_id, lon,
+		lat, address, type,
+		create_time,  tp_id,
+		proposal,anonymous,remark,voice_remark)
+		values ( #{userId,jdbcType=BIGINT}, #{lon,jdbcType=DOUBLE},
+		#{lat,jdbcType=DOUBLE}, #{address,jdbcType=VARCHAR},
+		#{type,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},#{tpId,jdbcType=BIGINT},
+		#{proposal,jdbcType=VARCHAR},#{anonymous},#{remark},#{voiceRemark})
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.IllegalReport">
+		update t_illegal_report
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=BIGINT},
+			</if>
+			<if test="lon != null">
+				lon = #{lon,jdbcType=DOUBLE},
+			</if>
+			<if test="lat != null">
+				lat = #{lat,jdbcType=DOUBLE},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=CHAR},
+			</if>
+			<if test="tpId != null">
+				tp_id = #{tpId,jdbcType=BIGINT},
+			</if>
+			<if test="proposal != null">
+				proposal = #{proposal,jdbcType=VARCHAR},
+			</if>
+			<if test="remark!=null">
+				remark=#{remark}
+			</if>
+			<if test="voiceRemark!=null">
+				voice_remark=#{voiceRemak}
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<select id="selectList" parameterType="illegalReport" resultMap="BaseResultMap">
+		SELECT
+		a.id,
+		a.user_id,
+		a.lon,
+		a.lat,
+		a.address,
+		a.type,
+		a.create_time,
+		a. STATUS,
+		a.tp_id,
+		a.proposal,
+		a.anonymous,
+		a.remark,
+		a.voice_remark,
+
+		u.`name` as tpName
+		FROM
+		t_illegal_report a
+
+		LEFT JOIN t_user u ON (a.tp_id = u.id)
+		where 1=1
+		<if test="userId!=null">
+			and a.user_id=#{userId}
+		</if>
+		<if test="status!=null">
+			and a.status=#{status}
+		</if>
+		<if test="address!=null">
+			and a.address like CONCAT('%','${address}','%')
+		</if>
+	</select>
+</mapper>

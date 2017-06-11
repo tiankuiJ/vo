@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.ConsultInsMapper">
+	<resultMap id="BaseResultMap" type="com.traffic.vo.ConsultIns">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="ac_id" property="acId" jdbcType="BIGINT" />
+		<result column="msg_id" property="msgId" jdbcType="BIGINT" />
+		<result column="ins_id" property="insId" jdbcType="BIGINT" />
+		<result column="notice" property="isNotice" jdbcType="INTEGER"/>
+		<result column="result" property="result" jdbcType="CHAR" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="handle_time" property="handleTime" jdbcType="TIMESTAMP" />
+		<result column="ins_user_id" property="insUserId" jdbcType="BIGINT"/>
+		<result column="tp_id" property="tpId" jdbcType="BIGINT"/>
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, ac_id, msg_id, result, create_date,ins_id,notice,handle_time,ins_user_id,tp_id
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from t_consult_ins
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from t_consult_ins
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.traffic.vo.ConsultIns">
+		insert into t_consult_ins ( ac_id, msg_id,
+		result, create_date,ins_id,handle_time,tp_id,ins_user_id)
+		values ( #{acId,jdbcType=BIGINT}, #{msgId,jdbcType=BIGINT},
+		#{result,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP},#{insId},#{handleTime},#{tpId},#{insUserId})
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.ConsultIns">
+		update t_consult_ins
+		<set>
+			<if test="acId != null">
+				ac_id = #{acId,jdbcType=BIGINT},
+			</if>
+			<if test="msgId != null">
+				msg_id = #{msgId,jdbcType=BIGINT},
+			</if>
+			<if test="result != null">
+				result = #{result,jdbcType=CHAR},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isNotice!=null">
+				notice=#{isNotice},
+			</if>
+			<if test="handleTime!=null">
+				handle_time=#{handleTime},
+			</if>
+			<if test="insUserId!=null">
+				ins_user_id=#{insUserId},
+			</if>
+			<if test="tpId!=null">
+				tp_id=#{tpId},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<select id="selectList" parameterType="com.traffic.vo.ConsultIns"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_consult_ins
+		where 1=1
+		<if test="acId!=null">
+			and ac_id=#{acId}
+		</if>
+		<if test="msgId!=null">
+			and msg_id=#{msgId}
+		</if>
+		<if test="insId!=null">
+			and ins_id=#{insId}
+		</if>
+		<if test="result!=null">
+			and result=#{result}
+		</if>
+	</select>
+
+	<select id="selectNoHandleIns15" resultMap="BaseResultMap">
+		SELECT
+		a.id, a.ac_id, a.msg_id, a.result, a.create_date,ins_id
+		FROM
+		t_consult_ins a,
+		t_accident_msg b,t_accident c
+		WHERE
+		a.msg_id = b.id AND c.msg_id=b.id AND a.notice=0
+		AND a.result = '未处理'
+		AND b.handle_type = '协商处理' AND c.safety_id is null AND b.create_time <![CDATA[ <   ]]> DATE_ADD(NOW(),INTERVAL
+		-3 MINUTE)
+		GROUP BY
+		msg_id
+	</select>
+	
+	<select id="selectNoHandleIns24" resultMap="BaseResultMap">
+		SELECT
+		a.id, a.ac_id, a.msg_id, a.result, a.create_date,ins_id
+		FROM
+		t_consult_ins a,
+		t_accident_msg b
+		WHERE
+		a.msg_id = b.id AND b.handle_type = '协商处理'
+		AND ((a.result = '未处理'
+		 AND b.create_time <![CDATA[ <   ]]> DATE_ADD(NOW(),INTERVAL
+		-24 HOUR))
+		OR (a.result='交警处理' AND b.`status`='未处理'))
+		GROUP BY
+		msg_id
+	</select>
+	
+	<select id="selectHandleList" parameterType="java.lang.Long" resultType="consultInsBo">
+<!-- 		select a.name as name,d.handle_time as handleTime,a.nick_name as phone from -->
+<!-- 		t_user a,t_auth b,t_role -->
+<!-- 		c,t_consult_ins d -->
+<!-- 		where a.id=b.user_id and b.role_id=c.id and c.mark='insAdmin' and -->
+<!-- 		b.org_ins_id = d.ins_id AND d.handle_time is NOT NULL AND d.msg_id=#{msgId} -->
+SELECT
+	a. NAME AS name,
+a.user_name AS phone,
+	d.handle_time AS handleTime,
+e.`name` AS insName
+	
+FROM
+	t_user a,
+	t_auth b,
+	t_role c,
+	t_consult_ins d,
+	t_ins_company e
+WHERE
+	a.id = b.user_id
+AND b.org_ins_id=e.id
+AND b.role_id = c.id
+AND d.ins_user_id=a.id
+AND b.org_ins_id = d.ins_id
+<!-- AND d.handle_time IS NOT NULL -->
+AND d.msg_id = #{msgId}
+	</select>
+</mapper>

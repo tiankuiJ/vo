@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.AgreementDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.AgreementDetail" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="ag_id" property="agId" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="card_img_z" property="cardImgZ" jdbcType="VARCHAR" />
+    <result column="card_img_f" property="cardImgF" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="traffic_type" property="trafficType" jdbcType="VARCHAR" />
+    <result column="license" property="license" jdbcType="VARCHAR" />
+    <result column="percent" property="percent" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ag_id, user_id, card_img_z, card_img_f, phone, traffic_type, license, percent, 
+    create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_agreement_detail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_agreement_detail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.AgreementDetail" >
+    insert into t_agreement_detail (ag_id, user_id, 
+      card_img_z, card_img_f, phone, 
+      traffic_type, license, percent, 
+      create_time)
+    values ( #{agId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
+      #{cardImgZ,jdbcType=VARCHAR}, #{cardImgF,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{trafficType,jdbcType=VARCHAR}, #{license,jdbcType=VARCHAR}, #{percent,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.AgreementDetail" >
+    update t_agreement_detail
+    <set >
+      <if test="agId != null" >
+        ag_id = #{agId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="cardImgZ != null" >
+        card_img_z = #{cardImgZ,jdbcType=VARCHAR},
+      </if>
+      <if test="cardImgF != null" >
+        card_img_f = #{cardImgF,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="trafficType != null" >
+        traffic_type = #{trafficType,jdbcType=VARCHAR},
+      </if>
+      <if test="license != null" >
+        license = #{license,jdbcType=VARCHAR},
+      </if>
+      <if test="percent != null" >
+        percent = #{percent,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

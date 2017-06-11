@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.CarsMapper">
+	<resultMap id="BaseResultMap" type="com.traffic.vo.Cars">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="user_id" property="userId" jdbcType="BIGINT" />
+		<result column="car_no" property="carNo" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="models" property="models" jdbcType="VARCHAR" />
+		<result column="engine_no" property="engineNo" jdbcType="VARCHAR" />
+		<result column="frame_no" property="frameNo" jdbcType="VARCHAR" />
+		<result column="driving_no" property="drivingNo" jdbcType="VARCHAR" />
+		<result column="on_date" property="onDate" jdbcType="DATE" />
+		<result column="ins_company_id" property="insCompanyId"
+			jdbcType="BIGINT" />
+		<result column="is_default" property="isDefault" jdbcType="VARCHAR" />
+		<result column="policy_number" property="policyNumber"
+			jdbcType="VARCHAR" />
+		<result column="policy_img" property="policyImg" jdbcType="VARCHAR" />
+		<result column="card_img_z" property="cardImgZ" jdbcType="VARCHAR" />
+		<result column="card_img_f" property="cardImgF" jdbcType="VARCHAR" />
+		<result column="deleted" property="deleted" jdbcType="VARCHAR" />
+		<result column="owner" property="owner" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, car_no, type, city, models, engine_no, frame_no, driving_no,
+		on_date,
+		ins_company_id, is_default,policy_number,policy_img,card_img_z,card_img_f,owner
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from t_cars
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<select id="selectByUser" resultMap="BaseResultMap"
+		parameterType="cars">
+		select
+		a.id, a.user_id, a.car_no, a.type, a.city, a.models, a.engine_no,
+		a.frame_no, a.driving_no, a.on_date,
+		a.ins_company_id, a.is_default,a.policy_number,a.policy_img,a.card_img_z as
+		cardImgZ,a.card_img_f as cardImgF,b.name as insCompanyName,a.owner
+		from t_cars a left join t_ins_company b on a.ins_company_id=b.id
+		where user_id = #{userId} and deleted='否'
+		<if test="carNo != null">
+			and a.car_no=#{carNo}
+		</if>
+		<if test="isDefault != null">
+			and a.is_default=#{isDefault}
+		</if>
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from t_cars
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" keyProperty="id" useGeneratedKeys="true"
+		parameterType="com.traffic.vo.Cars">
+		insert into t_cars (user_id, car_no,
+		type, city, models,
+		engine_no, frame_no, driving_no,
+		on_date, ins_company_id,
+		is_default,policy_number,policy_img,card_img_z,card_img_f,owner
+		)
+		values (#{userId,jdbcType=BIGINT}, #{carNo,jdbcType=VARCHAR},
+		#{type,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR},
+		#{models,jdbcType=VARCHAR},
+		#{engineNo,jdbcType=VARCHAR}, #{frameNo,jdbcType=VARCHAR}, #{drivingNo,jdbcType=VARCHAR},
+		#{onDate,jdbcType=DATE}, #{insCompanyId,jdbcType=BIGINT},
+		#{isDefault,jdbcType=VARCHAR},
+		#{policyNumber,jdbcType=VARCHAR},#{policyImg,jdbcType=VARCHAR},#{cardImgZ},#{cardImgF},#{owner}
+		)
+	</insert>
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.Cars">
+		update t_cars
+		<set>
+			<if test="carNo != null">
+				car_no = #{carNo,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				city = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="models != null">
+				models = #{models,jdbcType=VARCHAR},
+			</if>
+			<if test="engineNo != null">
+				engine_no = #{engineNo,jdbcType=VARCHAR},
+			</if>
+			<if test="frameNo != null">
+				frame_no = #{frameNo,jdbcType=VARCHAR},
+			</if>
+			<if test="drivingNo != null">
+				driving_no = #{drivingNo,jdbcType=VARCHAR},
+			</if>
+			<if test="onDate != null">
+				on_date = #{onDate,jdbcType=DATE},
+			</if>
+			<if test="insCompanyId != null">
+				ins_company_id = #{insCompanyId,jdbcType=BIGINT},
+			</if>
+			<if test="isDefault != null">
+				is_default = #{isDefault,jdbcType=VARCHAR},
+			</if>
+			<if test="policyNumber != null">
+				policy_number = #{policyNumber},
+			</if>
+			<if test="policyImg != null">
+				policy_img = #{policyImg},
+			</if>
+
+			<if test="cardImgZ != null">
+				card_img_z = #{cardImgZ},
+			</if>
+			<if test="cardImgF != null">
+				card_img_f = #{cardImgF}
+			</if>
+			<if test="owner!=null">
+				owner=#{owner}
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<select id="seeCarInfoBo" parameterType="java.lang.Long"
+		resultType="carsInfoBo">
+		
+		SELECT
+		car.card_img_z AS licenseCardZ,
+		car.card_img_f AS licenseCardF,
+		car.car_no AS carNo,
+		car.models AS models,
+		car.engine_no AS engineNo,
+		car.frame_no as frameNo,
+		car.owner as owner,
+		car.on_date AS onDate,
+		car.ins_company_id as insCompanyId,
+		ins.`name` AS insCompanyName,
+		car.policy_img AS policyImg,
+		car.policy_number as  policyNumber,
+		USER.`name` AS userName,
+		USER.user_name AS phone,
+		USER.license_imgs_front AS driveCardZ,
+		USER.license_imgs_back AS driveCardF,
+		USER.head_img as headImg
+		FROM
+		t_user USER,
+		t_cars car
+	LEFT JOIN t_ins_company ins ON (car.ins_company_id = ins.id)
+		WHERE
+		car.user_id = USER.id
+		
+		AND car.id = #{carId}
+	</select>
+	
+	<update id="deleteByUserAndCarNo" parameterType="com.traffic.vo.Cars" >
+		update t_cars set deleted='是' where
+		id=#{id}
+	</update>
+	
+	<update id="cancelDefault" parameterType="java.lang.Long">
+		update t_cars set is_default=0 where user_id = #{userId}
+	</update>
+</mapper>

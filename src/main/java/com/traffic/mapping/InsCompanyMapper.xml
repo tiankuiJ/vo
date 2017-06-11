@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.InsCompanyMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.InsCompany" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, address
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_ins_company
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_ins_company
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.InsCompany" useGeneratedKeys="true" keyProperty="id">
+    insert into t_ins_company (name, address
+      )
+    values (#{name,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.InsCompany" >
+    update t_ins_company
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="getList" parameterType="com.traffic.vo.InsCompany" resultMap="BaseResultMap">
+  	select
+  	<include refid="Base_Column_List" />
+  	from t_ins_company
+  	<where>
+  		<if test="name != null">
+  			and name like contact ('%',#{name},'%')
+  		</if>
+  		<if test="address != null">
+  			and address like contact ('%',#{address},'%')
+  		</if>
+  	</where>
+  </select>
+ <delete id="deletedByIds" parameterType="list">
+ 	delete from t_ins_company where id in
+ 	<foreach collection="list" item="id" open="(" separator="," close=")">
+ 		#{id}
+ 	</foreach>
+ </delete>
+ <select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id
+    from t_ins_company
+    where name = #{name}
+  </select>
+</mapper>

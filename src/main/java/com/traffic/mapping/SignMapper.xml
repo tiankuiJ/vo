@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.SignMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.Sign" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="longitude" property="longitude" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="VARCHAR" />
+    <result column="curr_longitude" property="currLongitude" jdbcType="VARCHAR" />
+    <result column="curr_latitude" property="currLatitude" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, address, longitude, latitude, curr_longitude, curr_latitude, create_date
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_sign
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_sign
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.Sign" >
+    insert into t_sign (user_id, address, 
+      longitude, latitude, curr_longitude, 
+      curr_latitude, create_date)
+    values (#{userId,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, 
+      #{longitude,jdbcType=VARCHAR}, #{latitude,jdbcType=VARCHAR}, #{currLongitude,jdbcType=VARCHAR}, 
+      #{currLatitude,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.Sign" >
+    update t_sign
+    <set >
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="currLongitude != null" >
+        curr_longitude = #{currLongitude,jdbcType=VARCHAR},
+      </if>
+      <if test="currLatitude != null" >
+        curr_latitude = #{currLatitude,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectCurrentDayByUser" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select id from t_sign where user_id = #{userId} and TO_DAYS(create_date) = TO_DAYS(now())	
+  </select>
+  
+   <select id="selectCurrentMonthByUser" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List" />
+    from t_sign where user_id = #{userId} and 
+	DATE_FORMAT( create_date, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) ORDER BY create_date ASC
+  </select>
+  
+</mapper>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.RolePermissionMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.RolePermission" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="role_id" property="roleId" jdbcType="BIGINT" />
+    <result column="resource_id" property="resourceId" jdbcType="BIGINT" />
+    <result column="permission_ids" property="permissionIds" jdbcType="VARCHAR" />
+  </resultMap>
+   <resultMap type="com.traffic.bo.RolePermissionBo" id="BaseResultBoMap" extends="BaseResultMap">
+  	<result column="name" property="name" jdbcType="VARCHAR"/>
+  	<result column="identity" property="identity" jdbcType="VARCHAR"/>
+  	<result column="pMark" property="pMark" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    a.id, a.role_id, a.resource_id, a.permission_ids
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_role_permission a
+    where a.id = #{id,jdbcType=BIGINT}
+  </select>
+   <delete id="deleteBatch" parameterType="list">
+   	delete from t_role_permission where id in
+   	<foreach collection="list" item="ids" open="(" separator="," close=")">
+   		#{ids}
+   	</foreach>
+   </delete>
+   <insert id="insertBatch" parameterType="list">
+   		insert into t_role_permission (role_id, resource_id, permission_ids)
+   		values 
+   		<foreach collection="list" item="it" index="index" separator=",">
+   			(#{it.roleId},#{it.resourceId},#{it.permissionIds})
+   		</foreach>
+   </insert>
+   <update id="updateBatch" parameterType="list">
+   	   <foreach collection="list" item="it" open="" separator=";" close=""> 
+   	   	   update t_role_permission
+   		   set permission_ids = #{it.permissionIds}
+   		   where resource_id = #{it.resourceId} and role_id = #{it.roleId}
+   	   </foreach>
+   </update>
+    <delete id="deleteByRole">
+   	delete from t_role_permission where role_id = #{roleId}
+   </delete>
+    <select id="selectByRole" resultMap="BaseResultBoMap" parameterType="java.lang.Long">
+   	 select
+		<include refid="Base_Column_List" />,
+		b.name,b.identity,(select identity from t_resource where id=b.parent_id) as pMark
+		from t_role_permission a,t_resource b where a.resource_id = b.id and a.role_id = #{roleId}
+   </select>
+    <select id="selectByRoleWithNp" resultMap="BaseResultBoMap" parameterType="java.lang.Long">
+   	select
+		<include refid="Base_Column_List" />,
+		b.name,b.identity
+		from t_role_permission a,t_resource b where a.resource_id = b.id and a.role_id = #{roleId}
+   </select>
+    <select id="selectByIds" resultMap="BaseResultBoMap" parameterType="java.lang.String">
+   	 select
+		<include refid="Base_Column_List" />,
+		b.name
+		from t_role_permission a,t_resource b where a.resource_id = b.id
+		and a.id in
+		<foreach collection="array" item="ids" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+   </select>
+   <delete id="deleteByRoleIds" parameterType="list">
+   	 delete from t_role_permission where role_id in
+   	 <foreach collection="list" item="id" open="(" separator="," close=")">
+   	 	#{id}
+   	 </foreach>
+   </delete>
+</mapper>

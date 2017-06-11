@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.AccidentCarMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.AccidentCar" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="ac_id" property="acId" jdbcType="BIGINT" />
+    <result column="license" property="license" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="card_img_z" property="cardImgZ" jdbcType="VARCHAR" />
+    <result column="card_img_f" property="cardImgF" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ac_id, license, phone, card_img_z, card_img_f, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_accident_car
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_accident_car
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.AccidentCar" >
+    insert into t_accident_car ( ac_id, license, 
+      phone, card_img_z, card_img_f, 
+      create_time)
+    values ( #{acId,jdbcType=BIGINT}, #{license,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{cardImgZ,jdbcType=VARCHAR}, #{cardImgF,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.AccidentCar" >
+    update t_accident_car
+    <set >
+      <if test="acId != null" >
+        ac_id = #{acId,jdbcType=BIGINT},
+      </if>
+      <if test="license != null" >
+        license = #{license,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="cardImgZ != null" >
+        card_img_z = #{cardImgZ,jdbcType=VARCHAR},
+      </if>
+      <if test="cardImgF != null" >
+        card_img_f = #{cardImgF,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+<!--   根据事故id集合查询所有事故车辆 -->
+  <select id="selectByAccident" parameterType="accident"  resultType="accidentCar">
+  		select  ac_id as acId,license  from t_accident_car where 
+  		ac_id in
+			<foreach item="item" index="index" collection="ids" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+  </select>
+  
+<!--   根据事故id查询该事故涉案车辆 -->
+   <select id="selectByAccidentId" parameterType="java.lang.Long"  resultType="accidentCar">
+  		select  ac_id as acId,license  from t_accident_car where 
+  		ac_id =#{accidentId}
+  </select>
+  
+<!--   根据事故消息id查询对应事故涉案车辆 -->
+  <select id="selectByMsgId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  		select c.id, c.ac_id, c.license, c.phone, c.card_img_z, c.card_img_f, c.create_time
+  		from t_accident_car as c,t_accident ac where c.ac_id=ac.id and ac.msg_id=#{msgId}
+  		GROUP BY c.license
+  </select>
+</mapper>

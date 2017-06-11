@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.PushTrailerMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.PushTrailer" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="ac_id" property="acId" jdbcType="BIGINT" />
+    <result column="trailer_id" property="trailerId" jdbcType="BIGINT" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ac_id, trailer_id, create_date
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_push_trailer
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_push_trailer
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.PushTrailer" >
+    insert into t_push_trailer ( ac_id, trailer_id, 
+      create_date)
+    values (#{acId,jdbcType=BIGINT}, #{trailerId,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.PushTrailer" >
+    update t_push_trailer
+    <set >
+      <if test="acId != null" >
+        ac_id = #{acId,jdbcType=BIGINT},
+      </if>
+      <if test="trailerId != null" >
+        trailer_id = #{trailerId,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectList" parameterType="com.traffic.vo.PushTrailer" resultMap="BaseResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from t_push_trailer
+    where 1=1
+    <if test="acId!=null">
+    	and ac_id=#{acId}
+    </if>
+    <if test="trailerId!=null">
+    	and trailer_id=#{trailerId}
+    </if>
+  </select>
+</mapper>

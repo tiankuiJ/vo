@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.ResponsibilityMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.bo.ResponsibilityBo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="msg_id" property="msgId" jdbcType="BIGINT" />
+    <result column="tp_id" property="tpId" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="accident_remark" property="accidentRemark" jdbcType="LONGVARCHAR" />
+    <result column="accident_result" property="accidentResult" jdbcType="LONGVARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="weather" property="weather" jdbcType="VARCHAR" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="word_url" property="wordUrl" jdbcType="VARCHAR" />
+    <result column="html_url" property="htmlUrl" jdbcType="VARCHAR" />
+    <result column="seal_html_url" property="sealHtmlUrl" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, msg_id, create_time,accident_remark, accident_result,tp_id,address,time,weather,number,word_url,html_url,seal_html_url
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_responsibility
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_responsibility
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.Responsibility" keyProperty="id" useGeneratedKeys="true" >
+    insert into t_responsibility ( msg_id, create_time, 
+      accident_remark, accident_result,tp_id,address,time,weather,number,word_url,html_url,seal_html_url)
+    values (#{msgId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{accidentRemark,jdbcType=LONGVARCHAR}, #{accidentResult,jdbcType=LONGVARCHAR},#{tpId},#{address},#{time},#{weather},#{number},#{wordUrl},#{htmlUrl},#{sealHtmlUrl})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.Responsibility" >
+    update t_responsibility
+    <set >
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accidentRemark != null" >
+        accident_remark = #{accidentRemark,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="accidentResult != null" >
+        accident_result = #{accidentResult,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weather!=null">
+      	weather=#{weather},
+      </if>
+      <if test="time!=null">
+      	time=#{time},
+      </if>
+      <if test="address!=null">
+      	address=#{address},
+      </if>
+      <if test="wordUrl!=null">
+      	word_url=#{wordUrl},
+      </if>
+      <if test="htmlUrl!=null">
+      	html_url=#{htmlUrl},
+      </if>
+      <if test="sealHtmlUrl!=null">
+      	seal_html_url=#{sealHtmlUrl},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectList" parameterType="com.traffic.vo.Responsibility" resultMap="BaseResultMap">
+  		 select 
+     a.id, a.msg_id, a.create_time,a.accident_remark, a.accident_result,a.tp_id,a.address,a.time,a.weather,a.number,a.html_url,a.word_url,a.seal_html_url
+    from t_responsibility a,t_client b
+    where b.msg_id = a.msg_id
+    <if test="msgId!=null">
+    	and a.msg_id=#{msgId}
+    </if>
+    <if test="id!=null">
+    	and a.id=#{id}
+    </if>
+    <if test="searchKey!=null">
+    	and concat(a.address,a.weather,a.number,b.`name`,b.phone) like CONCAT('%','${searchKey}','%')	
+    </if>
+    GROUP BY a.msg_id
+  </select>
+  
+  <select id="selectLastRecord" resultType="com.traffic.vo.Responsibility">
+  	select number from t_responsibility order by id desc limit 0,1
+  </select>
+</mapper>

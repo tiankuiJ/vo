@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.AccidentDataMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.AccidentData" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="ac_id" property="acId" jdbcType="BIGINT" />
+    <result column="msg_id" property="msgId" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="media_url" property="mediaUrl" jdbcType="VARCHAR" />
+    <result column="media_type" property="mediaType" jdbcType="VARCHAR" />
+    <result column="photo_type" property="photoType" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ac_id, user_id, media_url, media_type, photo_type, create_time,msg_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_accident_data
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_accident_data
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.AccidentData" >
+    insert into t_accident_data ( ac_id, user_id, 
+      media_url, media_type, photo_type, 
+      create_time,msg_id)
+    values ( #{acId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
+      #{mediaUrl,jdbcType=VARCHAR}, #{mediaType,jdbcType=VARCHAR}, #{photoType,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP},#{msgId})
+  </insert>
+  <insert id="insertSelective" parameterType="com.traffic.vo.AccidentData" >
+    insert into t_accident_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="acId != null" >
+        ac_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="mediaUrl != null" >
+        media_url,
+      </if>
+      <if test="mediaType != null" >
+        media_type,
+      </if>
+      <if test="photoType != null" >
+        photo_type,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="acId != null" >
+        #{acId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="mediaUrl != null" >
+        #{mediaUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaType != null" >
+        #{mediaType,jdbcType=VARCHAR},
+      </if>
+      <if test="photoType != null" >
+        #{photoType,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.AccidentData" >
+    update t_accident_data
+    <set >
+      <if test="acId != null" >
+        ac_id = #{acId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="mediaUrl != null" >
+        media_url = #{mediaUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaType != null" >
+        media_type = #{mediaType,jdbcType=VARCHAR},
+      </if>
+      <if test="photoType != null" >
+        photo_type = #{photoType,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+<!--   根据事故消息查询对应事故的所有资料 -->
+  <select id="selectByMsg" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  		select  d.id, d.ac_id, d.user_id, d.media_url, d.media_type, d.photo_type, d.create_time 
+  		from t_accident_data d,t_accident ac where ac.id=d.ac_id and ac.msg_id=#{msgId} ORDER BY d.media_type,d.photo_type
+  </select>
+  
+  <select id="selectByAccident" parameterType="accidentData" resultMap="BaseResultMap">
+   select
+  		<include refid="Base_Column_List" />
+    from t_accident_data
+    where ac_id = #{acId}
+    <if test="mediaType!=null">
+    	and media_type=#{mediaType}
+    </if>
+  	ORDER BY media_type,photo_type
+  </select>
+</mapper>

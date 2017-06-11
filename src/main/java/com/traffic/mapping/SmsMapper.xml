@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.SmsMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.Sms" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="result" property="result" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, phone, content, result, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_sms
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_sms
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.Sms" >
+    insert into t_sms (phone, content, 
+      result, create_time)
+    values (#{phone,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
+      #{result,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+ <select id="selectList" parameterType="com.traffic.vo.Sms" resultMap="BaseResultMap">
+ 	select 
+    <include refid="Base_Column_List" />
+    from t_sms
+    <where>
+    	<if test="phone != null">
+    		phone = #{phone}
+    	</if>
+    </where>
+    order by id desc
+ </select>
+</mapper>

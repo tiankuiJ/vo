@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.PushRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.PushRecord" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="msg_id" property="msgId" jdbcType="BIGINT" />
+    <result column="tp_id" property="tpId" jdbcType="BIGINT" />
+    <result column="result" property="result" jdbcType="CHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, msg_id, tp_id, result, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_push_record
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_push_record
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.PushRecord" >
+    insert into t_push_record ( msg_id, tp_id, 
+       create_time)
+    values (#{msgId,jdbcType=BIGINT}, #{tpId,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.PushRecord" >
+    update t_push_record
+    <set >
+      <if test="msgId != null" >
+        msg_id = #{msgId,jdbcType=BIGINT},
+      </if>
+      <if test="tpId != null" >
+        tp_id = #{tpId,jdbcType=BIGINT},
+      </if>
+      <if test="result != null" >
+        result = #{result,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectList" parameterType="pushRecord" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from t_push_record
+    where 1=1
+    <if test="msgId!=null">
+    	and msg_id=#{msgId}
+    </if>
+    <if test="tpId!=null">
+    	and tp_id=#{tpId}
+    </if>
+    <if test="result!=null">
+    	and result=#{result}
+    </if>
+  </select>
+</mapper>

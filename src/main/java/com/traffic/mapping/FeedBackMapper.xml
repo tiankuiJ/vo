@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.FeedBackMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.bo.FeedBackBo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="tel" property="tel" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="reply_user_id" property="replyUserId" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="CHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="reply_time" property="replyTime" jdbcType="TIMESTAMP" />
+    <result column="is_aym" property="isAym" jdbcType="VARCHAR"/>
+    <result column="userTel" property="userTel" jdbcType="VARCHAR" />
+	<result column="userRealName" property="userRealName" jdbcType="VARCHAR" />
+	<result column="intro" property="intro" jdbcType="LONGVARCHAR" />
+	<result column="reply_content" property="replyContent" jdbcType="LONGVARCHAR" />
+	<result column="img" property="img" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    a.id, a.tel, a.user_id, a.reply_user_id, a.status, a.create_time,a.reply_time,a.is_aym,
+    a.intro, a.reply_content, a.img
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    b.name as userRealName,b.user_name as userTel
+    from t_feedback a left join t_user b on a.user_id=b.id
+    where a.id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_feedback
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.FeedbackWithBLOBs" >
+    insert into t_feedback (tel, user_id, 
+      reply_user_id, status, create_time, 
+      intro, reply_content, img,reply_time,is_aym
+      )
+    values (#{tel,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
+      #{replyUserId,jdbcType=BIGINT}, #{status,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{intro,jdbcType=LONGVARCHAR}, #{replyContent,jdbcType=LONGVARCHAR}, #{img,jdbcType=LONGVARCHAR},
+      #{replyTime,jdbcType=TIMESTAMP},#{isAym}
+      )
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.FeedbackWithBLOBs" >
+    update t_feedback
+    <set >
+      <if test="replyUserId != null" >
+        reply_user_id = #{replyUserId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="replyContent != null" >
+        reply_content = #{replyContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="replyTime != null">
+      	reply_time = #{replyTime}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectList" parameterType="com.traffic.bo.FeedBackBo" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />,
+    b.name as userRealName,b.user_name as userTel
+    from t_feedback a left join t_user b on a.user_id=b.id
+    <where>
+    	<if test="userId != null">
+    		a.user_id = #{userId}
+    	</if>
+    	<if test="replyUserId != null">
+    		and a.reply_user_id = #{replyUserId}
+    	</if>
+    	<if test="status != null">
+    		and a.status = #{status}
+    	</if>
+    	<if test="userTel != null">
+    		and b.user_name = #{userTel} or b.name = #{userRealName}
+    	</if>
+    </where>
+  </select>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.AdMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.Ad" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="img" property="img" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="INTEGER" />
+    <result column="is_show" property="isShow" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="descb" property="descb" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.traffic.vo.Ad" extends="BaseResultMap" >
+    <result column="intro" property="intro" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, img, url, weight, is_show,title,descb
+  </sql>
+  <sql id="Blob_Column_List" >
+    intro
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_ad
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_ad
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.Ad" >
+    insert into t_ad (img, url, 
+      weight, is_show, intro,title,descb
+      )
+    values (#{img,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, 
+      #{weight,jdbcType=INTEGER}, #{isShow,jdbcType=VARCHAR}, #{intro,jdbcType=LONGVARCHAR},
+       #{title,jdbcType=VARCHAR},#{descb}
+      )
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.Ad" >
+    update t_ad
+    <set >
+      <if test="img != null" >
+        img = #{img,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="isShow != null" >
+        is_show = #{isShow,jdbcType=VARCHAR},
+      </if>
+      <if test="intro != null" >
+        intro = #{intro,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="title != null">
+      	title = #{title},
+      </if>
+      <if test="descb != null">
+      	descb = #{descb}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectList" parameterType="com.traffic.vo.Ad" resultMap="BaseResultMap">
+  	select
+  	<include refid="Base_Column_List"/>
+  	from t_ad
+  	<where>
+  		<if test="isShow != null">
+  			is_show = #{isShow}
+  		</if>
+  	</where>
+  	order by weight asc
+  </select>
+  <delete id="deleteBatch" parameterType="list">
+  	delete from t_ad where id in
+  	<foreach collection="list" item="ids" open="(" separator="," close=")">
+  		#{ids}
+  	</foreach>
+  </delete>
+</mapper>

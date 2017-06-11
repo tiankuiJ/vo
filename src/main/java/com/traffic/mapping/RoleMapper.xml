@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.RoleMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.Role" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="BIGINT" />
+    <result column="org_ins_id" property="orgInsId" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="CHAR" />
+    <result column="mark" property="mark" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, pid, org_ins_id, type, mark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_role
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_role
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.Role" useGeneratedKeys="true" keyProperty="id">
+    insert into t_role (name, pid, 
+      org_ins_id, type, mark)
+    values (#{name,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT}, 
+      #{orgInsId,jdbcType=BIGINT}, #{type,jdbcType=CHAR}, #{mark,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.Role" >
+    update t_role
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=BIGINT},
+      </if>
+      <if test="orgInsId != null" >
+        org_ins_id = #{orgInsId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=CHAR},
+      </if>
+      <if test="mark != null">
+      	mark = #{mark}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="getList" parameterType="com.traffic.vo.Role" resultMap="BaseResultMap">
+  	select
+  	<include refid="Base_Column_List" />
+  	from t_role
+  	<where>
+  		<if test="type != null">
+  			and type = #{type}
+  		</if>
+  		<if test="name != null">
+  			and name = #{name}
+  		</if>
+  		<if test="pid != null">
+  			and pid = #{pid}
+  		</if>
+  		<if test="orgInsId != null">
+  			and org_ins_id = #{orgInsId}
+  		</if>
+  		<if test="type == '交警'">
+  			or mark = 'orgAdmin'
+  		</if>
+  		<if test="type == '保险公司'">
+  			or mark = 'insAdmin'
+  		</if>
+  		<if test="type == '拖车公司'">
+  			or mark = 'traAdmin'
+  		</if>
+  	</where>
+  </select>
+  <select id="getAdminId" resultType="java.lang.Long" parameterType="java.lang.String">
+  	select id from t_role where mark = #{type}
+  </select>
+  <select id="getByTrailerIds" parameterType="list" resultType="java.lang.Long">
+  	select id from t_role where type = '拖车公司' and org_ins_id in
+  	<foreach collection="list" item="id" open="(" separator="," close=")">
+  		#{id}
+  	</foreach>
+  </select>
+  <delete id="deleteByTrailerIds" parameterType="list">
+  	delete from t_role where type = '拖车公司' and org_ins_id in 
+  	<foreach collection="list" item="id" open="(" separator="," close=")">
+  		#{id}
+  	</foreach>
+  </delete>
+</mapper>

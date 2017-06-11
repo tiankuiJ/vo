@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.IncAccidentMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.IncAccident" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="ac_id" property="acId" jdbcType="BIGINT" />
+    <result column="inc_id" property="incId" jdbcType="BIGINT" />
+    <result column="ins_id" property="incId" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="CHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="msg_id" property="msgId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ac_id, inc_id,ins_id, status, create_time, msg_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_inc_accident
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_inc_accident
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.IncAccident" >
+    insert into t_inc_accident ( ac_id, inc_id, ins_id,
+      status, create_time, msg_id
+      )
+    values ( #{acId,jdbcType=BIGINT}, #{incId,jdbcType=BIGINT},  #{insId,jdbcType=BIGINT}, 
+      #{status,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{msgId,jdbcType=BIGINT}
+      )
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.IncAccident" >
+    update t_inc_accident
+    <set >
+      <if test="acId != null" >
+        ac_id = #{acId,jdbcType=BIGINT},
+      </if>
+      <if test="incId != null" >
+        inc_id = #{incId,jdbcType=BIGINT},
+      </if>
+      <if test="insId != null" >
+        ins_id = #{insId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="msgId != null" >
+        msg_id = #{msgId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectList" parameterType="com.traffic.vo.IncAccident" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from t_inc_accident
+    where 1=1
+    <if test="incId!=null">
+    	and inc_id=#{incId}
+    </if>
+     <if test="insId!=null">
+    	and ins_id=#{insId}
+    </if>
+    <if test="acId!=null">
+    	and ac_id=#{acId}
+    </if>
+    <if test="msgId!=null">
+    	and msg_id=#{msgId}
+    </if>
+    <if test="status!=null">
+    	and status=#{status}
+    </if>
+  </select>
+</mapper>

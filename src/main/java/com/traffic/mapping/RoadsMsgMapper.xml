@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.RoadsMsgMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.RoadsMsg" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="voice_url" property="voiceUrl" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="lon" property="lon" jdbcType="DOUBLE" />
+    <result column="lat" property="lat" jdbcType="DOUBLE" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="all_range" property="allRange" jdbcType="INTEGER"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, voice_url, lon, lat, end_time, create_time,address,all_range
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_roads_msg
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_roads_msg
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteBatch" parameterType="list">
+    delete from t_roads_msg
+    where id in
+    <foreach collection="list" item="id" open="(" separator="," close=")">
+    	#{id}
+    </foreach>
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.RoadsMsg" >
+    insert into t_roads_msg ( voice_url, lon, 
+      lat, end_time,address,all_range
+      )
+    values ( #{voiceUrl,jdbcType=VARCHAR}, #{lon,jdbcType=DOUBLE}, 
+      #{lat,jdbcType=DOUBLE}, #{endTime,jdbcType=TIMESTAMP},#{address},#{allRange}
+      )
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.RoadsMsg" >
+    update t_roads_msg
+    <set >
+      <if test="voiceUrl != null" >
+        voice_url = #{voiceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="lon != null" >
+        lon = #{lon,jdbcType=DOUBLE},
+      </if>
+      <if test="lat != null" >
+        lat = #{lat,jdbcType=DOUBLE},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="address!=null">
+      	address = #{address},
+      </if>
+      <if test="allRange!=null">
+      	all_range = #{allRange}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectList" parameterType="roadsMsg" resultMap="BaseResultMap">
+  	  select 
+    <include refid="Base_Column_List" />
+    from t_roads_msg	
+    where 1=1
+    <if test="address!=null">
+    	and address like CONCAT('%','${address}','%') 
+    </if>
+    <if test="createTime != null">
+    	and end_time <![CDATA[ > ]]>#{createTime} 
+    </if>
+    <if test=" lon != null and lat != null">
+    	and ROUND(
+		6378.138 * 2 * ASIN(
+		SQRT(
+		POW(
+		SIN(
+		(
+		${lat} * PI() / 180 - lat * PI() / 180
+		) / 2
+		),
+		2
+		) + COS(${lat} * PI() / 180) * COS(lat * PI() / 180) * POW(
+		SIN(
+		(
+		${lon} * PI() / 180 - lon * PI() / 180
+		) / 2
+		),
+		2
+		)
+		)
+		) * 1000
+		) <![CDATA[  <  ]]>5000
+    </if>
+    or all_range=1
+  </select>
+</mapper>

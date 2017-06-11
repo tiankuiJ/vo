@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.OrganizationMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.Organization" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="county" property="county" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="BIGINT" />
+    <result column="tel" property="tel" jdbcType="VARCHAR" />
+    <result column="lon" property="lon" jdbcType="VARCHAR" />
+    <result column="lat" property="lat" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="CHAR" />
+    <result column="work_time" property="workTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, province, city, county, pid,tel,lon,lat,address,type,work_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_organization
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_organization
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.Organization" useGeneratedKeys="true" keyProperty="id">
+    insert into t_organization (name, province, 
+      city, county, pid,tel,lon,lat,address,type,work_time)
+    values (#{name,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, 
+      #{city,jdbcType=VARCHAR}, #{county,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT},
+      #{tel,jdbcType=VARCHAR},#{lon,jdbcType=VARCHAR},#{lat,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},
+      #{type,jdbcType=CHAR},#{workTime,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.Organization" >
+    update t_organization
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="county != null" >
+        county = #{county,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=BIGINT},
+      </if>
+      <if test="tel != null" >
+        tel = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="lon != null" >
+        lon = #{lon,jdbcType=VARCHAR},
+      </if>
+      <if test="lat != null" >
+        lat = #{lat,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+     <if test="type != null">
+     	type = #{type},
+     </if>
+     <if test="workTime != null">
+     	work_time = #{workTime}
+     </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="getList" parameterType="com.traffic.vo.Organization" resultMap="BaseResultMap">
+  	select
+  	<include refid="Base_Column_List" />
+  	from t_organization
+  	<where>
+  		<if test="name != null">
+  			and name = #{name}
+  		</if>
+  		<if test="province != null">
+  			and province = #{province}
+  		</if>
+  		<if test="city != null">
+  			and city = #{city}
+  		</if>
+  		<if test="county != null">
+  			and county = #{county}
+  		</if>
+  		<if test="pid != null">
+  			and pid = #{pid}
+  		</if>
+  		<if test="type != null">
+  			and type = #{type}
+  		</if>
+  	</where>
+  </select>
+</mapper>

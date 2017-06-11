@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.TrailerOrderMapper">
+	<resultMap id="BaseResultMap" type="com.traffic.vo.TrailerOrder">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="trailer_id" property="trailerId" jdbcType="BIGINT" />
+		<result column="ac_id" property="acId" jdbcType="BIGINT" />
+		<result column="user_id" property="userId" jdbcType="BIGINT" />
+		<result column="status" property="status" jdbcType="CHAR" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="evaluate_date" property="evaluateDate"
+			jdbcType="TIMESTAMP" />
+		<result column="evaluate" property="evaluate" jdbcType="VARCHAR" />
+		<result column="star" property="star" jdbcType="DOUBLE" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, trailer_id, ac_id, user_id, status, create_date,
+		evaluate,
+		star,evaluate_date
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from t_trailer_order
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+		t_trailer_order
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insertSelective" parameterType="com.traffic.vo.TrailerOrder">
+		insert into t_trailer_order
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="trailerId != null">
+				trailer_id,
+			</if>
+			<if test="acId != null">
+				ac_id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="evaluate != null">
+				evaluate,
+			</if>
+			<if test="evaluateDate != null">
+				evaluate_date,
+			</if>
+			<if test="star != null">
+				star,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="trailerId != null">
+				#{trailerId,jdbcType=BIGINT},
+			</if>
+			<if test="acId != null">
+				#{acId,jdbcType=BIGINT},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=BIGINT},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=CHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="evaluate != null">
+				#{evaluate,jdbcType=VARCHAR},
+			</if>
+			<if test="evaluateDate != null">
+				#{evaluate_date,jdbcType=TIMESTAMP},
+			</if>
+			<if test="star != null">
+				#{star,jdbcType=DOUBLE},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.TrailerOrder">
+		update t_trailer_order
+		<set>
+			<if test="trailerId != null">
+				trailer_id = #{trailerId,jdbcType=BIGINT},
+			</if>
+			<if test="acId != null">
+				ac_id = #{acId,jdbcType=BIGINT},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=BIGINT},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=CHAR},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="evaluateDate != null">
+				evaluate_date = #{evaluateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="evaluate != null">
+				evaluate = #{evaluate,jdbcType=VARCHAR},
+			</if>
+			<if test="star != null">
+				star = #{star,jdbcType=DOUBLE},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<select id="selectList" parameterType="com.traffic.vo.TrailerOrder"
+		resultType="trailerOrderBo">
+		SELECT
+		torder.id AS id,
+		torder.ac_id AS acId,
+		torder.create_date AS
+		createDate,
+		trailer.id AS trailerId,
+		trailer.`name` AS trailerName,
+		torder.`status` AS `status`,
+		trailer.tel AS phone,
+		trailer.star AS star,
+		trailer.s_num AS sNumber,
+		trailer.u_num AS uNumber
+		FROM
+		t_trailer
+		trailer,
+		t_trailer_order torder
+		WHERE torder.trailer_id=trailer.id
+		<if test="trailerId!=null">
+			and torder.trailer_id=#{trailerId}
+		</if>
+		<if test="acId!=null">
+			and ac_id=#{acId}
+		</if>
+		<if test="status!=null">
+			and torder.status=#{status}
+		</if>
+		<if test="userId!=null">
+			and torder.user_id=#{userId}
+		</if>
+	</select>
+
+
+	<select id="adminList" parameterType="com.traffic.vo.TrailerOrder"
+		resultType="trailerOrderBo">
+		SELECT
+		torder.id AS id,
+		torder.ac_id AS acId,
+		torder.create_date AS
+		createDate,
+		accident.address AS address,
+		accident.msg_id AS msgId,
+		trailer.id AS trailerId,
+		trailer.`name` AS trailerName,
+		torder.`status`
+		AS `status`,
+		trailer.star AS star,
+		trailer.s_num AS sNumber,
+		trailer.u_num AS uNumber
+		FROM
+		t_trailer trailer,
+		t_trailer_order torder,
+		t_accident accident
+		WHERE torder.trailer_id=trailer.id and
+		torder.ac_id=accident.id
+		and
+		torder.trailer_id=#{trailerId}
+		<if test="status!=null">
+			and torder.status=#{status}
+		</if>
+
+	</select>
+
+
+	<select id="selectListFinisht" parameterType="com.traffic.vo.TrailerOrder"
+		resultType="trailerOrderBo">
+		SELECT
+		torder.id AS id,
+		trailer.id AS trailerId,
+		trailer.`name` AS
+		trailerName,
+		torder.`status` AS `status`,
+		trailer.tel AS phone,
+		trailer.star AS star,
+		trailer.s_num AS sNumer,
+		trailer.u_num AS uNumber
+		FROM
+		t_trailer trailer,
+		t_trailer_order torder
+		WHERE
+		torder.trailer_id=trailer.id
+		and (torder.status='已完成' or
+		torder.status='已评价')
+		<if test="userId!=null">
+			and torder.user_id=#{userId}
+		</if>
+	</select>
+
+	<select id="selectEvaluateList" parameterType="com.traffic.vo.TrailerOrder"
+		resultType="com.traffic.vo.TrailerOrder">
+		select user.head_img as userHead,user.nick_name as
+		userNick,torder.star as
+		star,torder.evaluate as
+		evaluate,torder.evaluate_date as evaluateDate
+		from t_user
+		user,t_trailer_order torder
+		where torder.user_id=user.id and
+		torder.evaluate_date is not null and
+		torder.trailer_id=#{trailerId}
+	</select>
+
+	<select id="selectTrailer" parameterType="com.traffic.vo.TrailerOrder"
+		resultType="trailerOrderBo">
+		select c.car_no as license,a.phone as phone,a.address as
+		address,t.create_date as createDate,t.`status` as status,a.lon as
+		lon,a.lat as lat from
+		t_accident a,t_trailer_order t,t_cars c where
+		t.ac_id=a.id AND
+		a.car_id=c.id AND t.trailer_id=#{trailerId}
+		<if test="status!=null">
+			<if test="status=='服务中'">
+				and t.status='服务中'
+			</if>
+			<if test="status!='服务中'">
+				and (t.status='已完成' or t.status='已评价')
+			</if>
+		</if>
+	</select>
+
+	<select id="selectHandleList" parameterType="java.lang.Long"
+		resultType="consultInsBo">
+		SELECT
+		c.`name` as name,
+		c.tel as phone,
+		b.create_date as handleTime
+		FROM
+		t_accident a,
+		t_trailer_order b,
+		t_trailer c
+		WHERE
+		a.id = b.ac_id
+		AND a.msg_id = #{msgId}
+		AND c.id = b.trailer_id
+	</select>
+
+	<!-- <select id="selectTrailerFinish" parameterType="com.traffic.vo.TrailerOrder" -->
+	<!-- resultType="trailerOrderBo"> -->
+	<!-- select c.car_no as license,a.phone as phone,a.address as address,t.create_date 
+		as createDate,t.`status` as status,a.lon as lon,a.lat as lat from -->
+	<!-- t_accident a,t_trailer_order t,t_cars c where t.ac_id=a.id AND -->
+	<!-- a.car_id=c.id AND t.trailer_id=#{trailerId} and (t.status='已完成' or 
+		t.status='已评价') -->
+	<!-- </select> -->
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.ResourceMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.Resource" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="identity" property="identity" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="BIGINT" />
+    <result column="parent_ids" property="parentIds" jdbcType="VARCHAR" />
+    <result column="is_show" property="isShow" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="INTEGER" />
+    <result column="pMark" property="pMark" jdbcType="VARCHAR"/> 
+  </resultMap>
+  <sql id="Base_Column_List" >
+    a.id, a.icon, a.name, a.identity, a.parent_id, a.parent_ids, a.is_show, a.url, a.weight
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_resource a
+    where a.id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_resource
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.Resource" useGeneratedKeys="true" keyProperty="id">
+    insert into t_resource (icon, name, 
+      identity, parent_id, parent_ids, 
+      is_show, url, weight
+      )
+    values (#{icon,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{identity,jdbcType=VARCHAR}, #{parentId,jdbcType=BIGINT}, #{parentIds,jdbcType=VARCHAR}, 
+      #{isShow,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{weight,jdbcType=INTEGER}
+      )
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.Resource" >
+    update t_resource
+    <set >
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="identity != null" >
+        identity = #{identity,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null" >
+        parent_ids = #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="isShow != null" >
+        is_show = #{isShow,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="getAll" resultMap="BaseResultMap">
+  	 select 
+  	 <include refid="Base_Column_List" />
+  	 FROM  t_resource a order by a.parent_id desc,a.weight desc
+  </select>
+  <select id="getAllResource" resultMap="BaseResultMap">
+  	 select 
+  	 <include refid="Base_Column_List" />,
+  	 (select identity from t_resource where id=a.parent_id) as pMark
+  	 FROM  t_resource a where a.is_show=1 order by a.parent_id desc,a.weight desc
+  </select>
+   <select id="selectByRole" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from t_resource a,t_role_permission b where a.id=b.resource_id and a.is_show=1 and b.role_id=#{roleId} order by a.parent_id desc,a.weight desc
+  </select>
+</mapper>

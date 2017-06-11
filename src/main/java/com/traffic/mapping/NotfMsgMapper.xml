@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.traffic.mapper.NotfMsgMapper" >
+  <resultMap id="BaseResultMap" type="com.traffic.vo.NotfMsg" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="img" property="img" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="descb" property="descb" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.traffic.vo.NotfMsg" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, title, img, create_time,descb,url
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_notf_msg
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByBatch" parameterType="list" >
+    delete from t_notf_msg
+    where id in
+    <foreach collection="list" item="id" open="(" separator="," close=")">
+    	#{id}
+    </foreach>
+  </delete>
+  <insert id="insert" parameterType="com.traffic.vo.NotfMsg" >
+    insert into t_notf_msg (title, img, 
+      create_time, content,descb,url)
+    values (#{title,jdbcType=VARCHAR}, #{img,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR},#{descb},#{url})
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="com.traffic.vo.NotfMsg" >
+    update t_notf_msg
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="img != null" >
+        img = #{img,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="descb != null">
+      	descb = #{descb},
+      </if>
+      <if test="url != null">
+      	url = #{url}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectList" parameterType="com.traffic.vo.NotfMsg" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from t_notf_msg
+    <where>
+    	<if test="title != null">
+    		title like CONCAT('%',#{title},'%')
+    	</if>
+    </where>
+  </select>
+</mapper>
