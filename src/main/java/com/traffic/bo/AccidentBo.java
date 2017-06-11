@@ -9,7 +9,7 @@ import org.apache.ibatis.type.Alias;
 public class AccidentBo {
 	//事故消息id
 	private Long msgId;
-	//事故涉案车数哇哈哈哈1111
+	//事故涉案车数哇哈哈哈1111111112
 	private int carCount;
 	//事故地点
 	private String address;
