@@ -11,7 +11,7 @@ public class AccidentBo {
 	private Long msgId;
 	//事故涉案车数哇哈哈哈1111111112gfd
 	private int carCount;
-	//事故地点
+	//事故地点1111
 	private String address;
 	//事故时间
 	private Date createDate;
